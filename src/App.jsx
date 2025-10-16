@@ -1,9 +1,15 @@
 import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import WorkflowCanvas from "./pages/WorkflowCanvas";
-import Login from "./pages/login.jsx";
-import Signup from "./pages/Signup.jsx";
 import { useAuthStore } from "./store/authStore";
+
+// Pages
+import Login from "./pages/Login";
+import Signup from "./pages/Signup";
+import Dashboard from "./pages/Dashboard";
+import WorkflowCanvas from "./pages/WorkflowCanvas";
+
+// Layout
+import ProtectedLayout from "./layouts/ProtectedLayout";
 
 function App() {
   const token = useAuthStore((state) => state.token);
@@ -13,16 +19,21 @@ function App() {
       <Routes>
         <Route
           path="/login"
-          element={!token ? <Login /> : <Navigate to="/" replace />}
+          element={!token ? <Login /> : <Navigate to="/dashboard" replace />}
         />
         <Route
           path="/signup"
-          element={!token ? <Signup /> : <Navigate to="/" replace />}
+          element={!token ? <Signup /> : <Navigate to="/dashboard" replace />}
         />
+
         <Route
-          path="/"
-          element={token ? <WorkflowCanvas /> : <Navigate to="/login" />}
-        />
+          element={token ? <ProtectedLayout /> : <Navigate to="/login" replace />}
+        >
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/" element={<WorkflowCanvas />} />
+        </Route>
+
+        <Route path="*" element={<Navigate to="/login" replace />} />
       </Routes>
     </BrowserRouter>
   );

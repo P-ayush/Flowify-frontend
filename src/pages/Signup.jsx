@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
 import { useAuthStore } from "../store/authStore";
+import { signupUser } from "../api/authApi";
 
 const Signup = () => {
     const [name, setName] = useState("");
@@ -18,14 +18,10 @@ const Signup = () => {
         setLoading(true);
 
         try {
-            const res = await axios.post("http://localhost:3000/api/auth/signup", {
-                name,
-                email,
-                password,
-            });
+            const res = await signupUser(name, email, password);
 
-            login(res.data.data.user, res.data.data.token); 
-            navigate("/"); 
+            login(res.data.user, res.data.token); 
+            navigate("/dashboard"); 
         } catch (err) {
             setError(err.response?.data?.message || "Signup failed");
             setLoading(false);
